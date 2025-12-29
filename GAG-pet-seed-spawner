@@ -1,1 +1,100 @@
-loadstring(game:HttpGet("https://pastefy.app/CZ5Fm22Y/raw"))()
+-- VISUAL ONLY | DOES NOT SPAWN REAL PETS
+
+local player = game.Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "Petspawner"
+gui.ResetOnSpawn = false
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 330, 0, 360)
+frame.Position = UDim2.new(0.5, -165, 0.5, -180)
+frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+frame.Active = true
+frame.Draggable = true
+frame.BorderSizePixel = 0
+
+-- ================= TOP BUTTON =================
+local tierBtn = Instance.new("TextButton", frame)
+tierBtn.Size = UDim2.new(0.9, 0, 0, 40)
+tierBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+tierBtn.Text = "Spawn Tier Pet"
+tierBtn.Font = Enum.Font.GothamBold
+tierBtn.TextSize = 18
+tierBtn.BackgroundColor3 = Color3.fromRGB(255,170,0)
+tierBtn.TextColor3 = Color3.new(1,1,1)
+
+-- ================= INFO TEXT =================
+local info = Instance.new("TextLabel", frame)
+info.Size = UDim2.new(0.9,0,0,25)
+info.Position = UDim2.new(0.05,0,0.18,0)
+info.Text = "You can put name on here and spawn"
+info.Font = Enum.Font.Gotham
+info.TextSize = 13
+info.TextColor3 = Color3.fromRGB(200,200,200)
+info.BackgroundTransparency = 1
+info.TextWrapped = true
+
+-- ================= TEXTBOX =================
+local box = Instance.new("TextBox", frame)
+box.Size = UDim2.new(0.9,0,0,35)
+box.Position = UDim2.new(0.05,0,0.27,0)
+box.PlaceholderText = "Type the name of the pet"
+box.Font = Enum.Font.Gotham
+box.TextSize = 14
+box.TextColor3 = Color3.new(1,1,1)
+box.BackgroundColor3 = Color3.fromRGB(45,45,45)
+box.ClearTextOnFocus = false
+
+-- ================= SPAWN BUTTON =================
+local spawnBtn = Instance.new("TextButton", frame)
+spawnBtn.Size = UDim2.new(0.9,0,0,40)
+spawnBtn.Position = UDim2.new(0.05,0,0.38,0)
+spawnBtn.Text = "Spawn Pet"
+spawnBtn.Font = Enum.Font.GothamBold
+spawnBtn.TextSize = 16
+spawnBtn.BackgroundColor3 = Color3.fromRGB(160,90,255)
+spawnBtn.TextColor3 = Color3.new(1,1,1)
+
+-- ================= TOGGLES =================
+local states = {N=false,M=false,F=false,R=false}
+
+local function makeToggle(letter, x)
+	local b = Instance.new("TextButton", frame)
+	b.Size = UDim2.new(0, 55, 0, 40)
+	b.Position = UDim2.new(0, x, 0.53, 0)
+	b.Text = letter
+	b.Font = Enum.Font.GothamBold
+	b.TextSize = 16
+	b.BackgroundColor3 = Color3.fromRGB(80,80,80)
+	b.TextColor3 = Color3.new(1,1,1)
+
+	b.MouseButton1Click:Connect(function()
+		states[letter] = not states[letter]
+		b.BackgroundColor3 = states[letter]
+			and Color3.fromRGB(0,170,0)
+			or Color3.fromRGB(80,80,80)
+	end)
+end
+
+makeToggle("N", 25)
+makeToggle("M", 100)
+makeToggle("F", 175)
+makeToggle("R", 250)
+
+-- ================= VISUAL RESULT =================
+spawnBtn.MouseButton1Click:Connect(function()
+	local tags = {}
+	for k,v in pairs(states) do
+		if v then table.insert(tags,k) end
+	end
+
+	local tagText = #tags > 0 and table.concat(tags,"/") or "Normal"
+	local petName = box.Text ~= "" and box.Text or "Unknown Pet"
+
+	spawnBtn.Text = "["..tagText.."] "..petName
+	task.wait(2)
+	spawnBtn.Text = "Spawn Pet"
+end)
