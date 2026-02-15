@@ -1,100 +1,123 @@
--- VISUAL ONLY | DOES NOT SPAWN REAL PETS
+-- VISUAL UI ONLY
+-- Put this LocalScript inside StarterGui
 
 local player = game.Players.LocalPlayer
 
--- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "Petspawner"
+gui.Name = "PetReplicatorUI"
 gui.ResetOnSpawn = false
-gui.Parent = player.PlayerGui
+gui.Parent = player:WaitForChild("PlayerGui")
 
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 330, 0, 360)
-frame.Position = UDim2.new(0.5, -165, 0.5, -180)
-frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-frame.Active = true
-frame.Draggable = true
-frame.BorderSizePixel = 0
+-- Main window
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 500, 0, 300)
+main.Position = UDim2.new(0.5, -250, 0.5, -150)
+main.BackgroundColor3 = Color3.fromRGB(23, 26, 39)
+main.BorderSizePixel = 0
+main.Parent = gui
 
--- ================= TOP BUTTON =================
-local tierBtn = Instance.new("TextButton", frame)
-tierBtn.Size = UDim2.new(0.9, 0, 0, 40)
-tierBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
-tierBtn.Text = "Spawn Tier Pet"
-tierBtn.Font = Enum.Font.GothamBold
-tierBtn.TextSize = 18
-tierBtn.BackgroundColor3 = Color3.fromRGB(255,170,0)
-tierBtn.TextColor3 = Color3.new(1,1,1)
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 16)
+mainCorner.Parent = main
 
--- ================= INFO TEXT =================
-local info = Instance.new("TextLabel", frame)
-info.Size = UDim2.new(0.9,0,0,25)
-info.Position = UDim2.new(0.05,0,0.18,0)
-info.Text = "You can put name on here and spawn"
-info.Font = Enum.Font.Gotham
-info.TextSize = 13
-info.TextColor3 = Color3.fromRGB(200,200,200)
-info.BackgroundTransparency = 1
-info.TextWrapped = true
+-- Top bar
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 50)
+topBar.BackgroundColor3 = Color3.fromRGB(30, 34, 50)
+topBar.BorderSizePixel = 0
+topBar.Parent = main
 
--- ================= TEXTBOX =================
-local box = Instance.new("TextBox", frame)
-box.Size = UDim2.new(0.9,0,0,35)
-box.Position = UDim2.new(0.05,0,0.27,0)
-box.PlaceholderText = "Type the name of the pet"
-box.Font = Enum.Font.Gotham
-box.TextSize = 14
-box.TextColor3 = Color3.new(1,1,1)
-box.BackgroundColor3 = Color3.fromRGB(45,45,45)
-box.ClearTextOnFocus = false
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0, 16)
+topCorner.Parent = topBar
 
--- ================= SPAWN BUTTON =================
-local spawnBtn = Instance.new("TextButton", frame)
-spawnBtn.Size = UDim2.new(0.9,0,0,40)
-spawnBtn.Position = UDim2.new(0.05,0,0.38,0)
-spawnBtn.Text = "Spawn Pet"
-spawnBtn.Font = Enum.Font.GothamBold
-spawnBtn.TextSize = 16
-spawnBtn.BackgroundColor3 = Color3.fromRGB(160,90,255)
-spawnBtn.TextColor3 = Color3.new(1,1,1)
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -100, 1, 0)
+title.Position = UDim2.new(0, 20, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Pet Replicator"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Font = Enum.Font.GothamBold
+title.TextSize = 22
+title.Parent = topBar
 
--- ================= TOGGLES =================
-local states = {N=false,M=false,F=false,R=false}
+-- Minimize and Close symbols (visual only)
+local minimize = Instance.new("TextLabel")
+minimize.Size = UDim2.new(0, 30, 1, 0)
+minimize.Position = UDim2.new(1, -70, 0, 0)
+minimize.BackgroundTransparency = 1
+minimize.Text = "-"
+minimize.TextColor3 = Color3.fromRGB(200,200,200)
+minimize.Font = Enum.Font.GothamBold
+minimize.TextSize = 24
+minimize.Parent = topBar
 
-local function makeToggle(letter, x)
-	local b = Instance.new("TextButton", frame)
-	b.Size = UDim2.new(0, 55, 0, 40)
-	b.Position = UDim2.new(0, x, 0.53, 0)
-	b.Text = letter
-	b.Font = Enum.Font.GothamBold
-	b.TextSize = 16
-	b.BackgroundColor3 = Color3.fromRGB(80,80,80)
-	b.TextColor3 = Color3.new(1,1,1)
+local close = Instance.new("TextLabel")
+close.Size = UDim2.new(0, 30, 1, 0)
+close.Position = UDim2.new(1, -40, 0, 0)
+close.BackgroundTransparency = 1
+close.Text = "X"
+close.TextColor3 = Color3.fromRGB(200,200,200)
+close.Font = Enum.Font.GothamBold
+close.TextSize = 20
+close.Parent = topBar
 
-	b.MouseButton1Click:Connect(function()
-		states[letter] = not states[letter]
-		b.BackgroundColor3 = states[letter]
-			and Color3.fromRGB(0,170,0)
-			or Color3.fromRGB(80,80,80)
-	end)
-end
+-- Pet display box
+local petBox = Instance.new("Frame")
+petBox.Size = UDim2.new(1, -40, 0, 120)
+petBox.Position = UDim2.new(0, 20, 0, 80)
+petBox.BackgroundColor3 = Color3.fromRGB(32, 36, 55)
+petBox.BorderSizePixel = 0
+petBox.Parent = main
 
-makeToggle("N", 25)
-makeToggle("M", 100)
-makeToggle("F", 175)
-makeToggle("R", 250)
+local petCorner = Instance.new("UICorner")
+petCorner.CornerRadius = UDim.new(0, 14)
+petCorner.Parent = petBox
 
--- ================= VISUAL RESULT =================
-spawnBtn.MouseButton1Click:Connect(function()
-	local tags = {}
-	for k,v in pairs(states) do
-		if v then table.insert(tags,k) end
-	end
+-- Pet info text
+local petInfo = Instance.new("TextLabel")
+petInfo.Size = UDim2.new(1, -20, 1, -20)
+petInfo.Position = UDim2.new(0, 10, 0, 10)
+petInfo.BackgroundTransparency = 1
+petInfo.Text = "● Cryptid\nMega Neon • Fly • Ride"
+petInfo.TextWrapped = true
+petInfo.TextColor3 = Color3.fromRGB(210, 170, 255)
+petInfo.TextXAlignment = Enum.TextXAlignment.Left
+petInfo.TextYAlignment = Enum.TextYAlignment.Top
+petInfo.Font = Enum.Font.GothamSemibold
+petInfo.TextSize = 18
+petInfo.Parent = petBox
 
-	local tagText = #tags > 0 and table.concat(tags,"/") or "Normal"
-	local petName = box.Text ~= "" and box.Text or "Unknown Pet"
+-- Big center text
+local spawning = Instance.new("TextLabel")
+spawning.Size = UDim2.new(1, 0, 0, 60)
+spawning.Position = UDim2.new(0, 0, 0.5, -20)
+spawning.BackgroundTransparency = 1
+spawning.Text = "Spawning"
+spawning.TextColor3 = Color3.fromRGB(255,255,255)
+spawning.Font = Enum.Font.GothamBold
+spawning.TextSize = 40
+spawning.Parent = main
 
-	spawnBtn.Text = "["..tagText.."] "..petName
-	task.wait(2)
-	spawnBtn.Text = "Spawn Pet"
-end)
+-- Bottom button (visual only)
+local button = Instance.new("Frame")
+button.Size = UDim2.new(1, -40, 0, 55)
+button.Position = UDim2.new(0, 20, 1, -75)
+button.BackgroundColor3 = Color3.fromRGB(90, 120, 255)
+button.BorderSizePixel = 0
+button.Parent = main
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 14)
+btnCorner.Parent = button
+
+local btnText = Instance.new("TextLabel")
+btnText.Size = UDim2.new(1, 0, 1, 0)
+btnText.BackgroundTransparency = 1
+btnText.Text = "REPLICATE PET ⚡"
+btnText.TextColor3 = Color3.fromRGB(255,255,255)
+btnText.Font = Enum.Font.GothamBold
+btnText.TextSize = 20
+btnText.Parent = button
